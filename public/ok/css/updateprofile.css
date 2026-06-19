@@ -1,0 +1,114 @@
+.modal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.modal-content{
+    width:450px;
+    background:#181818;
+    padding:25px;
+    border-radius:15px;
+    color:white;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    font-size:28px;
+    cursor:pointer;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+}
+
+.form-group input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#2a2a2a;
+    color:white;
+}
+
+.save-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#ff5500;
+    color:white;
+    cursor:pointer;
+}
+.error-text{
+    color:#ff4d4f;
+    font-size:13px;
+    margin-top:6px;
+    display:block;
+}
+
+.success-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    border-radius:20px;
+    z-index:999;
+}
+
+.success-popup{
+    background:#181818;
+    padding:35px;
+    border-radius:20px;
+    text-align:center;
+    width:320px;
+    animation:showPopup .3s ease;
+}
+
+.success-popup i{
+    font-size:55px;
+    color:#1db954;
+    margin-bottom:15px;
+}
+
+.success-popup h3{
+    color:white;
+    margin-bottom:10px;
+}
+
+.success-popup p{
+    color:#bbb;
+}
+
+@keyframes showPopup{
+
+    from{
+        opacity:0;
+        transform:scale(.8);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
