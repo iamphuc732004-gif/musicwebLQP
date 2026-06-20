@@ -58,7 +58,8 @@ class ChatbotController {
                 "songs"         => $recommendedSongs,
                 "song_ids"      => $songIds,
                 "action"        => $aiData['action'] ?? 'none',
-                "playlist_name" => $aiData['playlist_name'] ?? ''
+                "playlist_name" => $aiData['playlist_name'] ?? '',
+                "playlist"      => $aiData['playlist'] ?? null
             ], JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             echo json_encode([
@@ -181,44 +182,61 @@ class ChatbotController {
             $rawText = trim($rawText);
             $aiResponseData = json_decode($rawText, true);
             if (isset($aiResponseData['reply'])) {
+
+                $playlistData = null;
+            
                 $_SESSION['chat_history'][] = [
                     "role" => "model",
                     "parts" => [["text" => $rawText]]
                 ];
+            
                 if (
                     isset($aiResponseData['action']) &&
                     $aiResponseData['action'] === 'create_playlist'
                 ) {
-                
+            
                     $playlistModel = new PlaylistModel();
-                
+            
                     $playlistId = $playlistModel->create(
                         $_SESSION['user']['id'],
                         $aiResponseData['playlist_name'] ?? 'AI Playlist',
                         'default_playlist.jpg'
                     );
-                
+            
                     if ($playlistId) {
-                
+            
                         foreach (($aiResponseData['song_ids'] ?? []) as $songId) {
-                
+            
                             $playlistModel->addSong(
                                 $playlistId,
                                 $songId
                             );
                         }
+            
+                        $playlistData = [
+                            "id" => $playlistId,
+                            "name" => $aiResponseData['playlist_name'] ?? 'AI Playlist',
+                            "image" => BASE_URL . "ok/images/default_playlist.jpg"
+                        ];
                     }
                 }
+            
                 return [
                     "reply" => $aiResponseData['reply'],
                     "song_ids" => $aiResponseData['song_ids'] ?? [],
                     "action" => $aiResponseData['action'] ?? 'none',
-                    "playlist_name" => $aiResponseData['playlist_name'] ?? ''
+                    "playlist_name" => $aiResponseData['playlist_name'] ?? '',
+                    "playlist" => $playlistData
                 ];
+            
             } else {
+            
                 return [
                     "reply" => "⚠️ Lỗi giải mã JSON từ AI: " . htmlspecialchars($rawText),
-                    "song_ids" => []
+                    "song_ids" => [],
+                    "action" => "none",
+                    "playlist_name" => "",
+                    "playlist" => null
                 ];
             }
         }

@@ -23,36 +23,69 @@ class PlaylistController {
         $songs = $model->getSongs($playlist_id);
         echo json_encode($songs);
     }
-    public function create() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $model = new PlaylistModel();
-            $user_id = $_SESSION['user']['id'];
-            $name = $_POST['name'];
-            $imageName = "default-playlist.jpg";
-            
-            if(isset($_FILES['image']) &&
-               $_FILES['image']['error'] == 0){
-                $ext = pathinfo(
-                    $_FILES['image']['name'],
-                    PATHINFO_EXTENSION
-                );
-                $imageName =
-                    time() . "_" .
-                    rand(1000,9999) .
-                    "." . $ext;
-                move_uploaded_file(
-                    $_FILES['image']['tmp_name'],
-                    __DIR__ . "/../../public/ok/images/" . $imageName
-                );
-            }
-            $model->create(
-                $user_id,
-                $name,
-                $imageName
+    public function create()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $model = new PlaylistModel();
+
+        $user_id = $_SESSION['user']['id'];
+        $name = trim($_POST['name']);
+
+        $imageName = "default-playlist.jpg";
+
+        if (
+            isset($_FILES['image']) &&
+            $_FILES['image']['error'] == 0
+        ) {
+
+            $ext = pathinfo(
+                $_FILES['image']['name'],
+                PATHINFO_EXTENSION
             );
-            header("Location: index.php?url=profile");
+
+            $imageName =
+                time() . "_" .
+                rand(1000, 9999) .
+                "." . $ext;
+
+            move_uploaded_file(
+                $_FILES['image']['tmp_name'],
+                __DIR__ . "/../../public/ok/images/" . $imageName
+            );
         }
+
+        $playlistId = $model->create(
+            $user_id,
+            $name,
+            $imageName
+        );
+
+        header('Content-Type: application/json');
+
+        if ($playlistId) {
+
+            echo json_encode([
+                "success" => true,
+                "playlist" => [
+                    "id" => $playlistId,
+                    "name" => $name,
+                    "image" => BASE_URL . "ok/images/" . $imageName
+                ]
+            ]);
+
+        } else {
+
+            echo json_encode([
+                "success" => false,
+                "message" => "Không thể tạo playlist"
+            ]);
+
+        }
+
+        exit;
     }
+}
     public function addSong(){
         header('Content-Type: application/json');
         $playlist_id = $_POST['playlist_id'];

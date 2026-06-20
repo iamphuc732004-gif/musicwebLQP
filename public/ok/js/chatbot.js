@@ -187,11 +187,52 @@ window.sendMessage = async function () {
             playPrev();
         }
 
-        if (data.action === "create_playlist") {
-
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
+        if (
+            data.action === "create_playlist" &&
+            data.playlist
+        ) {
+        
+            const playlistHTML = `
+                <div class="card"
+                     data-id="${data.playlist.id}"
+                     onclick="loadPlaylistSongs(
+                         ${data.playlist.id},
+                         '${data.playlist.name}'
+                     )">
+        
+                    <div class="card-menu">
+                        <div class="menu-btn"
+                             onclick="event.stopPropagation();
+                             toggleCardMenu(this)">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+        
+                        <div class="menu-dropdown">
+                            <div class="menu-item"
+                                 onclick="event.stopPropagation();
+                                 deletePlaylist(${data.playlist.id})">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete
+                            </div>
+                        </div>
+                    </div>
+        
+                    <img src="${data.playlist.image}">
+                    <div class="card-title">
+                        ${data.playlist.name}
+                    </div>
+                </div>
+            `;
+        
+            const playlistList =
+                document.getElementById("playlist-list");
+        
+            if (playlistList) {
+                playlistList.insertAdjacentHTML(
+                    "afterbegin",
+                    playlistHTML
+                );
+            }
         }
 
         /* ==========================

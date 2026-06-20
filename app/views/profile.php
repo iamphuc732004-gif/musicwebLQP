@@ -127,32 +127,63 @@
         
         <button id="createPlaylistBtn" class="create-playlist-btn" onclick="openCreatePlaylist()">+ Create Playlist</button>
         <div id="playlistModal" class="playlist-modal">
-            <div class="playlist-modal-content">
-                <span class="close-modal" onclick="closePlaylistModal()">&times;</span>
-                <h2>Create Playlist</h2>
+    <div class="playlist-modal-content">
 
-                <form action="<?= BASE_URL ?>index.php?url=create_playlist" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>Tên Playlist</label>
-                    <input type="text" name="name" placeholder="Nhập tên playlist..."required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Ảnh Playlist</label>
-                    <div class="upload-wrapper">
-                        <div id="previewContainer" class="preview-container">
-                            <img id="imagePreview" src="#" alt="Preview">
-                            <span id="placeholderText">Chưa chọn ảnh</span>
-                        </div>
-                        
-                        <label for="file-upload" class="choose-file-btn">Choose File</label>
-                        <input id="file-upload" type="file" name="image" accept="image/*" onchange="previewImage(event)">
-                    </div>
-                </div>
-                <button type="submit" class="create-playlist-submit">Create Playlist</button>
-                </form>
+        <span class="close-modal"
+              onclick="closePlaylistModal()">&times;</span>
+
+        <h2>Create Playlist</h2>
+
+        <form id="createPlaylistForm" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label>Tên Playlist</label>
+                <input type="text"
+                       name="name"
+                       placeholder="Nhập tên playlist..."
+                       required>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label>Ảnh Playlist</label>
+
+                <div class="upload-wrapper">
+
+                    <div id="previewContainer"
+                         class="preview-container">
+
+                        <img id="imagePreview"
+                             src="#"
+                             alt="Preview">
+
+                        <span id="placeholderText">
+                            Chưa chọn ảnh
+                        </span>
+
+                    </div>
+
+                    <label for="file-upload"
+                           class="choose-file-btn">
+                        Choose File
+                    </label>
+
+                    <input id="file-upload"
+                           type="file"
+                           name="image"
+                           accept="image/*"
+                           onchange="previewImage(event)">
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="create-playlist-submit">
+                Create Playlist
+            </button>
+
+        </form>
+
+    </div>
+</div>
         <div id="editPlaylistModal" class="playlist-modal">
             <div class="playlist-modal-content">
                 <span class="close-modal" onclick="closeEditPlaylistModal()">&times;</span>

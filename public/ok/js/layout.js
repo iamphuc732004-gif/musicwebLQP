@@ -905,3 +905,90 @@ function downloadSong(url) {
     a.click();
     document.body.removeChild(a);
 }
+document.addEventListener("DOMContentLoaded", function () {
+
+    const createForm = document.getElementById("createPlaylistForm");
+
+    if (!createForm) return;
+
+    createForm.addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        try {
+
+            const response = await fetch(
+                "index.php?url=create_playlist",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                const playlistHTML = `
+                    <div class="card"
+                         data-id="${result.playlist.id}"
+                         onclick="loadPlaylistSongs(${result.playlist.id}, '${result.playlist.name}')">
+
+                        <div class="card-menu">
+                            <div class="menu-btn"
+                                 onclick="event.stopPropagation();toggleCardMenu(this)">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </div>
+
+                            <div class="menu-dropdown">
+                                <div class="menu-item"
+                                     onclick="event.stopPropagation();
+                                     openEditPlaylist(
+                                        ${result.playlist.id},
+                                        '${result.playlist.name}',
+                                        '${result.playlist.image}'
+                                     )">
+                                    <i class="fa-solid fa-pen"></i>Edit
+                                </div>
+
+                                <div class="menu-item"
+                                     onclick="event.stopPropagation();
+                                     deletePlaylist(${result.playlist.id})">
+                                    <i class="fa-solid fa-trash"></i>Delete
+                                </div>
+                            </div>
+                        </div>
+
+                        <img src="${result.playlist.image}">
+                        <div class="card-title">
+                            ${result.playlist.name}
+                        </div>
+                    </div>
+                `;
+
+                document
+                    .getElementById("playlist-list")
+                    .insertAdjacentHTML("afterbegin", playlistHTML);
+
+                closePlaylistModal();
+
+                createForm.reset();
+
+            } else {
+
+                alert(result.message || "Tạo playlist thất bại");
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+            alert("Có lỗi xảy ra");
+
+        }
+
+    });
+
+});
