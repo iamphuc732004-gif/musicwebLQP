@@ -1,10 +1,13 @@
 <?php
 require_once "../app/models/MusicModel.php";
 require_once "../app/models/PlaylistModel.php";
+require_once "../app/models/ChatbotHistoryModel.php";
 class ChatbotController {
     private $musicModel;
+    private $historyModel;
     public function __construct(){
         $this->musicModel = new MusicModel();
+        $this->historyModel = new ChatbotHistoryModel();
     }
     public function send(){
         if (session_status() === PHP_SESSION_NONE) {
@@ -37,6 +40,12 @@ class ChatbotController {
             }
             $aiData = $this->askGeminiAdvanced($message, $songListForAI);
             $reply = $aiData['reply'];
+            $userId = $_SESSION['user']['id'] ?? 0;
+            $result = $this->historyModel->save(
+                $userId,
+                $message,
+                $reply
+            );
             $songIds = $aiData['song_ids'] ?? [];
             $recommendedSongs = [];
             if (!empty($songIds) && is_array($songIds)) {
