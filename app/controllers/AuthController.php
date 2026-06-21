@@ -39,27 +39,52 @@ class AuthController {
             exit;
         }
     }
-    public function doRegister() {
-        $model = new UserModel();
-        $username = trim($_POST['username'] ?? '');
-        $email    = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        if (!$username || !$email || !$password) {
-            echo "Vui lòng nhập đầy đủ thông tin!";
-            return;
-        }
-        if ($model->checkUserExists($username, $email)) {
-            echo "Username hoặc Email đã tồn tại!";
-            return;
-        }
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        if ($model->register($username, $email, $hashedPassword)) {
-            header("Location: ?url=login");
-            exit;
-        } else {
-            echo "Đăng ký thất bại!";
-        }
+    public function doRegister()
+{
+    session_start();
+
+    $model = new UserModel();
+
+    $username = trim($_POST['username'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $_SESSION['old_username'] = $username;
+    $_SESSION['old_email'] = $email;
+
+    if (!$username || !$email || !$password) {
+
+        $_SESSION['register_errors']['general']
+            = "Vui lòng nhập đầy đủ thông tin!";
+
+        header("Location: ?url=register");
+        exit;
     }
+    if ($model->checkUserExists($username, $email)) {
+
+        $_SESSION['register_errors']['email']
+            = "Username hoặc Email đã tồn tại!";
+
+        header("Location: ?url=register");
+        exit;
+    }
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    if ($model->register($username, $email, $hashedPassword)) {
+
+        unset($_SESSION['old_username']);
+        unset($_SESSION['old_email']);
+        unset($_SESSION['register_errors']);
+
+        header("Location: ?url=login");
+        exit;
+    }
+
+    $_SESSION['register_errors']['general']
+        = "Đăng ký thất bại!";
+
+    header("Location: ?url=register");
+    exit;
+}
     public function logout() {
         session_destroy();
         header("Location: ?url=home");
